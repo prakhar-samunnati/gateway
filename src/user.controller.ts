@@ -6,6 +6,7 @@ import {
   Param,
   Put,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CommunicationService } from './communication.service';
@@ -32,12 +33,12 @@ export class UserController {
   }
 
   @Get(':id')
-  findOneUser(@Param('id') id: number) {
+  findOneUser(@Param('id',ParseIntPipe) id: number) {
     return this.userService.findOneUser(id).toPromise();
   }
 
   @Put(':id')
-  async updateUser(@Param('id') id: number, @Body() updateUserDto) {
+  async updateUser(@Param('id',ParseIntPipe) id: number, @Body() updateUserDto) {
     const user = await this.userService
       .updateUser(id, updateUserDto)
       .toPromise();
@@ -48,7 +49,8 @@ export class UserController {
   }
 
   @Delete(':id')
-  async removeUser(@Param('id') id: number) {
+  async removeUser(@Param('id',ParseIntPipe) id: number) {
+    console.log(typeof id);
     const result = await this.userService.removeUser(id).toPromise();
     await this.communicationService.notify(`User removed: ${id}`).toPromise();
     return result;
